@@ -1,0 +1,20 @@
+# ROS2 build and install folders
+build/
+install/
+log/
+
+# ROS2 temporary files
+*.pyc
+__pycache__/
+
+# Docker files (optional if generated)
+#docker/ros2_dp/
+
+# MyCobot package (no versioning if it's a third-party repo)
+src/mycobot_ros2
+
+NOTAS_MEMORIA/
+
+run_mycobot280_moveit.sh
+run_mycobot320_moveit.sh
+

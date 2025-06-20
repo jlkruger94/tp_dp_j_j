@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<robot name="dp_caos" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Sobreescribir valores para que no tenga fricción ni limites en los ejes-->
+  <xacro:arg name="damping1" default="0.000001"/>              <!-- rozamiento viscoso -->  
+  <xacro:arg name="friction1" default="0.000001"/>             <!-- rozamiento de Coulomb -->  
+  <xacro:arg name="damping2" default="0.000001"/>              <!-- rozamiento viscoso -->  
+  <xacro:arg name="friction2" default="0.000001"/>             <!-- rozamiento de Coulomb -->  
+
+  <xacro:arg name="q1_max" default="3140.0"/>                  <!-- límite físico superior eje 1 -->
+  <xacro:arg name="q1_min" default="-3140.0"/>                 <!-- límite físico inferior eje 1 -->  
+  <xacro:arg name="qp1_max" default="500.0"/>                  <!-- límite físico velocidad eje 1 -->  
+  <xacro:arg name="tau1_max" default="10000.0"/>               <!-- límite físico del esfuerzo aplicable en eje 1 -->    
+  <xacro:arg name="q2_max" default="3140.0"/>                  <!-- límite físico superior eje 2 -->
+  <xacro:arg name="q2_min" default="-3140.0"/>                 <!-- límite físico inferior eje 2 -->  
+  <xacro:arg name="qp2_max" default="500.0"/>                  <!-- límite físico velocidad eje 2 -->  
+  <xacro:arg name="tau2_max" default="10000.0"/>               <!-- límite físico del esfuerzo aplicable en eje 2 -->    
+
+  <xacro:arg name="q1_ini" default="1.0"/>                     <!-- condición inicial de posición -->    
+  <xacro:arg name="q2_ini" default="1.0"/>                     <!-- condición inicial de posición -->    
+
+  <!-- Incluir el modelo base -->
+  <xacro:include filename="$(find dp)/urdf/dp_base.xacro"/>
+
+</robot>
+

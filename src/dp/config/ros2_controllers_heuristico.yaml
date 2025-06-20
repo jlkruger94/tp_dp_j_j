@@ -1,0 +1,32 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 200  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+position_controller:
+  ros__parameters:
+    type: joint_trajectory_controller/JointTrajectoryController
+    joints:
+      - joint1
+      - joint2
+    #interface_name: effort  # Importante: actúa con torques
+    command_interfaces:
+      - effort
+    state_interfaces:
+      - position
+      - velocity
+    gains:
+      joint1:
+        p: 30.0  # Por Zn
+        i: 92.0
+        d: 4.03
+        i_clamp: 15.0
+        antiwindup: true
+      joint2:
+        p: 30.0   # Por ZN
+        i: 190.0
+        d: 2.0
+        i_clamp: 15.0
+        antiwindup: true

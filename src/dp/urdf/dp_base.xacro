@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<robot name="double_pendulum" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Incluimos los parámetros comunes -->
+  <xacro:include filename="$(find dp)/urdf/dp_params.xacro"/>
+  <xacro:arg name="dp_fixed" default="true"/>    <!--- El robot está fijo al mundo --> 
+
+  <!--******************* DEFINICIONES DE ESLABONES  *******************-->
+  <xacro:if value="$(arg dp_fixed)">
+    <!-- World link -->
+    <link name="world"/>
+    <!-- Junta fija entre world y base_link -->
+    <joint name="fixed" type="fixed">
+        <parent link="world"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+  </xacro:if>
+
+  <!-- Link base (fijo) -->
+  <!-- La terna 0 está centrada en la base del cilindro con el Z para arriba  -->
+  <link name="base_link">
+      <inertial>          
+        <origin xyz="0 0 ${height0/2.0}"/>
+        <mass value="${mass0}"/>
+        <inertia ixx="${ixx0}" ixy="0.0" ixz="0.0" iyy="${iyy0}" iyz="0.0" izz="${izz0}"/>
+      </inertial>
+      <visual>
+          <origin xyz="0 0 ${height0/2.0}"/>
+          <geometry>
+              <cylinder radius="${radius0}" length="${height0}"/>
+          </geometry>
+          <material name="green">
+              <color rgba="0 1 0 1"/>
+          </material>
+      </visual>
+      <collision>
+          <origin xyz="0 0 ${height0/2.0}"/>
+          <geometry>
+              <cylinder radius="${radius0}" length="${height0}"/>
+          </geometry>
+      </collision>
+  </link>
+  
+  <!-- Primer eslabón -->
+  <!-- La terna 1 está en la entrada del eslabón => DH proximal  -->
+  <link name="link1">
+      <inertial>
+        <origin xyz="${a1/2.0} 0 0"/>
+        <mass value="${mass1}"/>
+        <inertia ixx="${ixx1}" ixy="0.0" ixz="0.0" iyy="${iyy1}" iyz="0.0" izz="${izz1}"/>
+      </inertial>
+      <visual>
+          <origin xyz="${a1/2.0} 0 0"/>
+          <geometry>
+              <box size="${length1} ${width1} ${width1}"/>
+          </geometry>
+          <material name="blue">
+              <color rgba="0 0 1 1"/>
+          </material>
+      </visual>
+      <collision>
+          <origin xyz="${a1/2.0} 0 0"/>
+          <geometry>
+              <box size="${length1} ${width1} ${width1}"/>
+          </geometry>
+      </collision>
+  </link>
+
+  <!-- Segundo eslabón -->
+  <!-- La terna 2 está en la entrada del eslabón => DH proximal  -->
+  <link name="link2">
+      <inertial>
+          <origin xyz="${a2/2.0} 0 0"/>
+          <mass value="${mass2}"/>
+          <inertia ixx="${ixx2}" ixy="0.0" ixz="0.0" iyy="${iyy2}" iyz="0.0" izz="${izz2}"/>
+      </inertial>
+      <visual>
+          <origin xyz="${a2/2.0} 0 0"/>
+          <geometry>
+              <box size="${length2} ${width2} ${width2}"/>
+          </geometry>
+          <material name="red">
+              <color rgba="1 0 0 1"/>
+          </material>
+      </visual>
+      <collision>
+          <origin xyz="${a2/2.0} 0 0"/>
+          <geometry>
+              <box size="${length2} ${width2} ${width2}"/>
+          </geometry>
+      </collision>
+  </link>
+
+<!-- Tercer eslabón -->
+  <!-- La terna 3 está en la entrada del eslabón => DH proximal  -->
+  <link name="link3">
+      <inertial>
+          <origin xyz="${a3/2.0} 0 0"/>
+          <mass value="${mass3}"/>
+          <inertia ixx="${ixx3}" ixy="0.0" ixz="0.0" iyy="${iyy3}" iyz="0.0" izz="${izz3}"/>
+      </inertial>
+      <visual>
+          <origin xyz="${a3/2.0} 0 0"/>
+          <geometry>
+              <box size="${length3} ${width3} ${width3}"/>
+          </geometry>
+          <material name="red">
+              <color rgba="1 0 0 1"/>
+          </material>
+      </visual>
+      <collision>
+          <origin xyz="${a3/2.0} 0 0"/>
+          <geometry>
+              <box size="${length3} ${width3} ${width3}"/>
+          </geometry>
+      </collision>
+  </link>
+
+  <!--******************* DEFINICIONES DE JUNTAS  *******************-->  
+  <!-- Junta entre base y link1 -->
+  <joint name="joint1" type="revolute">
+      <parent link="base_link"/>
+      <child link="link1"/>
+      <origin xyz="0 0 ${height0+width1/2.0}" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="$(arg tau1_max)" lower="$(arg q1_min)" upper="$(arg q1_max)" velocity="$(arg qp1_max)"/>
+      <dynamics damping="$(arg damping1)" friction="$(arg friction1)"/>
+  </joint>
+  
+  <!-- Junta entre link1 y link2 -->
+  <joint name="joint2" type="revolute">
+      <parent link="link1"/>
+      <child link="link2"/>
+      <origin xyz="${a1} 0 ${width1}" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="$(arg tau2_max)" lower="$(arg q2_min)" upper="$(arg q2_max)" velocity="$(arg qp2_max)"/>
+      <dynamics damping="$(arg damping2)" friction="$(arg friction2)"/>
+  </joint>
+
+  <!-- Junta entre link2 y link3 -->
+  <joint name="joint3" type="revolute">
+      <parent link="link2"/>
+      <child link="link3"/>
+      <origin xyz="${a2} 0 ${width2}" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="$(arg tau3_max)" lower="$(arg q3_min)" upper="$(arg q3_max)" velocity="$(arg qp3_max)"/>
+      <dynamics damping="$(arg damping3)" friction="$(arg friction3)"/>
+  </joint>
+
+  <!--******************* DEFINICIONES DE HERRAMIENTA  *******************-->
+  <!-- Terna TOOL0 en el extremo de link2 -->
+  <joint name="tool0_joint" type="fixed">
+    <parent link="link3"/>
+    <child link="tool0"/>
+    <origin xyz="${a3} 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="tool0"/>
+  
+  <!--******************* CONFIGURACION DE la transmisión a fines de documentación ******************* -->
+  <!-- La transmisión está fuera del lazo tan solo para que se vea un topic con la velocidad del motor -->
+  <!-- Para que quede adentro del lazo hay que cambiar el tipo de controlador -->
+  <transmission name="motor1_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="motor1_actuator">
+      <mechanicalReduction>${N1}</mechanicalReduction>
+    </actuator>
+    <joint name="joint1">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <transmission name="motor2_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="motor2_actuator">
+      <mechanicalReduction>${N2}</mechanicalReduction>
+    </actuator>
+    <joint name="joint2">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <transmission name="motor3_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="motor3_actuator">
+      <mechanicalReduction>${N3}</mechanicalReduction>
+    </actuator>
+    <joint name="joint3">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <!--******************* CONFIGURACION DE ros2_control *******************-->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="joint1">
+      <command_interface name="position">
+        <param name="min">-3.14</param>
+        <param name="max">3.14</param>
+      </command_interface>    
+      <command_interface name="effort">
+        <param name="min">-100</param>
+        <param name="max">100</param>
+      </command_interface>
+      <state_interface name="position">
+        <param name="initial_value">$(arg q1_ini)</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="joint2">
+      <command_interface name="position">
+        <param name="min">-3.14</param>
+        <param name="max">3.14</param>
+      </command_interface>    
+      <command_interface name="effort">
+        <param name="min">-100</param>
+        <param name="max">100</param>
+      </command_interface>
+      <state_interface name="position">
+        <param name="initial_value">$(arg q2_ini)</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="joint3">
+      <command_interface name="position">
+        <param name="min">-3.14</param>
+        <param name="max">3.14</param>
+      </command_interface>    
+      <command_interface name="effort">
+        <param name="min">-100</param>
+        <param name="max">100</param>
+      </command_interface>
+      <state_interface name="position">
+        <param name="initial_value">$(arg q3_ini)</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+  </ros2_control>
+
+  <!-- ros_control plugin -->
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find dp)/config/ros2_controllers.yaml</parameters>
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+    </plugin>
+  </gazebo>
+</robot>
+

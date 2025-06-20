@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot name="dp_loose" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Sobreescribir ĺos límites físicos para que pueda dar muchas vueltas sobre sí mismo -->
+  <xacro:arg name="q1_max" default="3140.0"/>                  <!-- límite físico superior eje 1 -->
+  <xacro:arg name="q1_min" default="-3140.0"/>                 <!-- límite físico inferior eje 1 -->  
+  <xacro:arg name="q2_max" default="3140.0"/>                  <!-- límite físico superior eje 2 -->
+  <xacro:arg name="q2_min" default="-3140.0"/>                 <!-- límite físico inferior eje 2 -->  
+
+  <xacro:arg name="dp_fixed" default="false"/>  
+
+  <!-- Incluir el modelo base -->
+  <xacro:include filename="$(find dp)/urdf/dp_base.xacro"/>
+</robot>
+
