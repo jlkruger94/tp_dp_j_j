@@ -21,21 +21,21 @@ position_controller:
     gains:
       joint1:
         p: 36.0  # Por Zn
-        i: 276.0
-        d: 1.95
+        i: 15.0
+        d: 5.0
         i_clamp: 15.0
         antiwindup: true
       joint2:
-        p: 10.0
-        i: 50.0
-        d: 2.0
-        i_clamp: 5.0
+        p: 36.0  # Por Zn
+        i: 15.0
+        d: 5.0
+        i_clamp: 15.0
         antiwindup: true
       joint3:
-        p: 10.0
-        i: 50.0
-        d: 2.0
-        i_clamp: 5.0
+        p: 36.0  # Por Zn
+        i: 15.0
+        d: 5.0
+        i_clamp: 15.0
         antiwindup: true
         
 effort_controller:
